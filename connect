@@ -1,0 +1,17 @@
+import pymysql
+import pandas as pd
+db = pymysql.connect(host='127.0.0.1',user='root',passwd='123456',db='task1',port=3306,charset='utf8' )
+cur = db.cursor()
+def read_table(cur,sql_order):
+    try:
+        cur.execute(sql_order)
+        data = cur.fetchall()
+        frame = pd.DataFrame(list(data))
+    except:
+        frame = pd.DataFrame
+    return frame
+
+frame1 = read_table(cur,'select * from order_info').rename(columns={0:'order_ID',1:'user_ID',2:'ispaid',3:'price',4:'paidtime'})
+frame2 = read_table(cur,'select * from user_info').rename(columns={0:'user_ID',1:'gender',2:'birthday'})
+#print(frame1.head())
+#print(frame2.head())
