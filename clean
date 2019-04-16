@@ -1,0 +1,17 @@
+import connect as c
+import numpy as np
+import pandas as pd
+
+#replace the \r and ' '  with NaN
+c.frame1.replace('\r',np.nan,inplace=True)
+c.frame2.replace(['\r',''],np.nan,inplace=True)
+
+#remove the '\r' at the end of paidtime and birthday
+c.frame1.loc[:,'paidtime'] = c.frame1.loc[:,'paidtime'].str.strip('\r')
+c.frame2.loc[:,'birthday'] = c.frame2.loc[:,'birthday'].str.strip('\r')
+
+#remove the ' \ufeff' at the begin of the data
+c.frame2.loc[101534,'user_ID'] = '1'
+c.frame2.loc[:,'user_ID'] = c.frame2.loc[:,'user_ID'].apply(pd.to_numeric)
+c.frame1.loc[539413,'order_ID'] = '1'
+c.frame1.loc[:,'order_ID'] = c.frame1.loc[:,'order_ID'].apply(pd.to_numeric)
