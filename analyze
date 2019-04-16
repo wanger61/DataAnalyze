@@ -1,0 +1,24 @@
+import clean as d
+import pandas as pd
+import connect as c
+
+frame3 = pd.merge(c.frame1,c.frame2,how='left',on='user_ID')
+
+frame4 = frame3[frame3['gender'].notna()]
+frame4 = frame4[frame4['paidtime'].notna()]
+#convert paidtime to type(datetime)
+frame4.loc[:,'paidtime'] = pd.to_datetime(frame4.loc[:,'paidtime'])
+frame4.drop(['birthday'],axis=1,inplace=True)
+
+grouped = frame4.groupby([frame4.loc[:,'paidtime'].dt.month,'gender'])
+grouped.sum()
+grouped.count()
+
+frame5 = frame4.drop_duplicates(['user_ID'])
+grouped2 = frame5.groupby([frame5.loc[:,'paidtime'].dt.month,'gender'])
+grouped2.count()
+
+frame5 = frame3[frame3['paidtime'].notna()]
+frame5.loc[:,'paidtime'] = pd.to_datetime(frame5.loc[:,'paidtime'])
+grouped3 = frame5.groupby([frame5.loc[:,'paidtime'].dt.month,frame5.loc[:,'paidtime'].dt.day])
+grouped3.count()['order_ID']
