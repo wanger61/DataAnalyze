@@ -24,6 +24,7 @@ def repeat_purchase_ratio(df):
     return pivoted_counts_transf.sum()/pivoted_counts_transf.count()
  
 repeat_purchase_ratio(frame3)
+
 #回购率
 def purchase_return(data):
             if data[3] == 1:
