@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 frame1 = pd.read_csv(r'C:\Users\Administrator\Desktop\order_info2.csv')
 frame1['paidtime'] = pd.to_datetime(frame1['paidtime'])
@@ -15,6 +16,30 @@ frame3 = frame1[frame1['paidtime'].notna()]
 grouped2 = frame3.groupby([frame3['paidtime'].dt.month,'user_id'])
 grouped2['price'].sum().sort_values(ascending = False).head()
 
-#复购、回购率
-grouped3 = frame3.groupby([frame3['paidtime'].dt.month,frame3['paidtime'].dt.day])
-grouped3['user_id'].apply(pd.value_counts)
+#复购率
+def repeat_purchase_ratio(df):
+    pivoted_counts = df.pivot_table(index = 'user_id', columns = df['paidtime'].dt.month,
+                                    values='price',aggfunc= 'count').fillna(0) 
+    pivoted_counts_transf = pivoted_counts.applymap(lambda x: 1 if x > 1 else np.NaN if x == 0 else 0)
+    return pivoted_counts_transf.sum()/pivoted_counts_transf.count()
+ 
+repeat_purchase_ratio(frame3)
+#回购率
+def purchase_return(data):
+            if data[3] == 1:
+                if data[4] == 1:
+                    return 1
+                if data[4] == 0:
+                    return 0 
+            else:
+                return np.nan
+
+def return_purchase_ratio(df):
+    pivoted_amount = df.pivot_table(index='user_id', columns = df['paidtime'].dt.month,
+                                    values='price', aggfunc='count').fillna(0) 
+    pivoted_purchase = pivoted_amount.applymap(lambda x: 1 if x > 0 else 0) .drop(5,axis=1)
+    pivoted_purchase_return = pivoted_purchase.apply(purchase_return, axis=1)
+    ret_purchasr_ratio = pivoted_purchase_return.sum() / pivoted_purchase_return.count()
+    return  ret_purchasr_ratio
+    
+return_purchase_ratio(frame3)
