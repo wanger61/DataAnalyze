@@ -1,0 +1,20 @@
+import pandas as pd
+
+frame1 = pd.read_csv(r'C:\Users\Administrator\Desktop\order_info2.csv')
+frame1['paidtime'] = pd.to_datetime(frame1['paidtime'])
+
+frame2 = frame1[frame1['paidtime'].dt.month==4]
+frame2 = frame2[frame2['paidtime'].dt.day<=14]
+
+#各店销售总额
+grouped = frame2.groupby(['shop',frame2['paidtime'].dt.day])
+grouped['price'].sum()
+
+#消费金额TOP10用户
+frame3 = frame1[frame1['paidtime'].notna()]
+grouped2 = frame3.groupby([frame3['paidtime'].dt.month,'user_id'])
+grouped2['price'].sum().sort_values(ascending = False).head()
+
+#复购、回购率
+grouped3 = frame3.groupby([frame3['paidtime'].dt.month,frame3['paidtime'].dt.day])
+grouped3['user_id'].apply(pd.value_counts)
