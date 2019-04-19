@@ -14,7 +14,7 @@ grouped['price'].sum()
 #消费金额TOP10用户
 frame3 = frame1[frame1['paidtime'].notna()]
 grouped2 = frame3.groupby([frame3['paidtime'].dt.month,'user_id'])
-grouped2['price'].sum().sort_values(ascending = False).head()
+grouped2['price'].sum().groupby('paidtime',group_keys=False).nlargest(10) #再分一次组进行组内排序！！！
 
 #复购率
 def repeat_purchase_ratio(df):
